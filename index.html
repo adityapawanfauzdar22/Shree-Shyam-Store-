@@ -118,11 +118,12 @@ body { margin:0; font-family:'Segoe UI'; background:#f6f9f7; }
     <div class="search">
         <input type="text" id="search" placeholder="Search..." onkeyup="searchProduct()">
     </div>
+    <button onclick="showAdmin()" style="border:none;background:none;font-size:18px;">⚙️</button>
 </div>
 
 <div class="banner">
     <h2>Best Tools for Carpenters 🔧</h2>
-    <p>Flat Discount Available 💰</p>
+    <p>Carpenter Special Discount 💰</p>
 </div>
 
 <div class="categories">
@@ -131,7 +132,8 @@ body { margin:0; font-family:'Segoe UI'; background:#f6f9f7; }
     <div class="cat" onclick="filter('hand')">Hand</div>
 </div>
 
-<div class="login" id="loginBox">
+<!-- Hidden Login -->
+<div class="login" id="loginBox" style="display:none;">
 <input type="password" id="pass" placeholder="Admin Password">
 <button class="btn" onclick="login()">Login</button>
 </div>
@@ -159,6 +161,10 @@ body { margin:0; font-family:'Segoe UI'; background:#f6f9f7; }
 let PASSWORD="280688";
 let products=JSON.parse(localStorage.getItem("products"))||[];
 let cart=JSON.parse(localStorage.getItem("cart"))||[];
+
+function showAdmin(){
+    document.getElementById("loginBox").style.display="block";
+}
 
 function login(){
     let p=document.getElementById("pass").value;
