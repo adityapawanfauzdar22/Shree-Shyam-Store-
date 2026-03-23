@@ -132,7 +132,6 @@ body { margin:0; font-family:'Segoe UI'; background:#f6f9f7; }
     <div class="cat" onclick="filter('hand')">Hand</div>
 </div>
 
-<!-- Hidden Login -->
 <div class="login" id="loginBox" style="display:none;">
 <input type="password" id="pass" placeholder="Admin Password">
 <button class="btn" onclick="login()">Login</button>
@@ -151,10 +150,14 @@ body { margin:0; font-family:'Segoe UI'; background:#f6f9f7; }
 <div class="container" id="products"></div>
 
 <div class="cart" id="cart">
+
+<button onclick="toggleCart()" style="float:right;background:red;color:white;border:none;border-radius:50%;padding:5px 10px;cursor:pointer;">❌</button>
+
 <h3>Cart</h3>
 <ul id="cart-items"></ul>
 <p id="total"></p>
 <button class="btn" onclick="orderWhatsApp()">Order</button>
+
 </div>
 
 <script>
@@ -187,40 +190,6 @@ function displayProducts(){
         <button class="btn" onclick="deleteProduct(${i})">Delete</button>
         </div>`;
     });
-}
-
-function addProduct(){
-    let p={
-        name:nameInput.value,
-        price:priceInput.value,
-        img:imgInput.value,
-        category:catInput.value
-    };
-    products.push(p);
-    localStorage.setItem("products",JSON.stringify(products));
-    displayProducts();
-}
-
-function deleteProduct(i){
-    products.splice(i,1);
-    localStorage.setItem("products",JSON.stringify(products));
-    displayProducts();
-}
-
-function searchProduct(){
-    let v=search.value.toLowerCase();
-    let items=document.getElementsByClassName("product");
-    for(let i=0;i<items.length;i++){
-        let t=items[i].innerText.toLowerCase();
-        items[i].style.display=t.includes(v)?"block":"none";
-    }
-}
-
-function filter(cat){
-    let items=document.getElementsByClassName("product");
-    for(let i=0;i<items.length;i++){
-        items[i].style.display=(cat==="all"||items[i].classList.contains(cat))?"block":"none";
-    }
 }
 
 function addToCart(n,p){
