@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Shree Shyam Store</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body { font-family: Arial; margin:0; background:#f4f4f4; }
+header { background:#ff6600; color:white; padding:15px; text-align:center; font-size:24px; }
+.login, .admin { background:white; padding:15px; margin:10px; text-align:center; }
+input { padding:8px; margin:5px; }
+.container { display:flex; flex-wrap:wrap; justify-content:center; }
+.product { background:white; margin:10px; padding:15px; width:220px; border-radius:10px; text-align:center; }
+.product img { width:100%; height:140px; }
+.btn { padding:8px; margin-top:5px; display:block; background:green; color:white; border:none; border-radius:5px; cursor:pointer; }
+.search-box { text-align:center; padding:10px; }
+.cart { position:fixed; right:0; top:0; width:300px; height:100%; background:white; display:none; padding:10px; }
+.cart-btn { position:fixed; right:10px; top:10px; background:black; color:white; padding:10px; border-radius:50%; cursor:pointer; }
+</style>
+</head>
+<body>
+
+<header>Shree Shyam Store 🔧</header>
+
+<div class="login" id="loginBox">
+<h3>Admin Login</h3>
+<input type="password" id="pass" placeholder="Password">
+<button class="btn" onclick="login()">Login</button>
+</div>
+
+<div class="admin" id="adminPanel" style="display:none;">
+<input id="nameInput" placeholder="Product Name">
+<input id="priceInput" placeholder="Price">
+<input id="imgInput" placeholder="Image URL">
+<input id="categoryInput" placeholder="Category (power/hand)">
+<button class="btn" onclick="addProduct()">Add Product</button>
+</div>
+
+<div class="search-box">
+<input type="text" id="search" placeholder="Search..." onkeyup="searchProduct()">
+</div>
+
+<div class="search-box">
+<button onclick="filter('all')">All</button>
+<button onclick="filter('power')">Power Tools</button>
+<button onclick="filter('hand')">Hand Tools</button>
+</div>
+
+<div class="cart-btn" onclick="toggleCart()">🛒</div>
+
+<div class="container" id="products"></div>
+
+<div class="cart" id="cart">
+<h3>Cart</h3>
+<ul id="cart-items"></ul>
+<p id="total"></p>
+<button class="btn" onclick="orderWhatsApp()">Order</button>
+</div>
+
+<script>
+let PASSWORD = "1234";
+let products = JSON.parse(localStorage.getItem("products")) || [];
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+function login(){
+    let input = document.getElementById("pass").value;
+    if(input === PASSWORD){
+        document.getElementById("loginBox").style.display="none";
+        document.getElementById("adminPanel").style.display="block";
+    } else alert("Wrong Password");
+}
+
+function displayProducts(){
+    let container = document.getElementById("products");
+    container.innerHTML = "";
+    products.forEach((p, index)=>{
+        container.innerHTML += `
+        <div class="product ${p.category}">
+            <img src="${p.img}">
+            <h3>${p.name}</h3>
+            <p>₹${p.price}</p>
+            <button class="btn" onclick="addToCart('${p.name}',${p.price})">Add to Cart</button>
+            <button class="btn" onclick="deleteProduct(${index})">Delete</button>
+        </div>`;
+    });
+}
+
+function addProduct(){
+    let name = document.getElementById("nameInput").value;
+    let price = document.getElementById("priceInput").value;
+    let img = document.getElementById("imgInput").value;
+    let category = document.getElementById("categoryInput").value;
+    products.push({name, price, img, category});
+    localStorage.setItem("products", JSON.stringify(products));
+    displayProducts();
+}
+
+function deleteProduct(index){
+    products.splice(index,1);
+    localStorage.setItem("products", JSON.stringify(products));
+    displayProducts();
+}
+
+function searchProduct(){
+    let val = document.getElementById("search").value.toLowerCase();
+    let items = document.getElementsByClassName("product");
+    for(let i=0;i<items.length;i++){
+        let txt = items[i].innerText.toLowerCase();
+        items[i].style.display = txt.includes(val) ? "block":"none";
+    }
+}
+
+function filter(cat){
+    let items = document.getElementsByClassName("product");
+    for(let i=0;i<items.length;i++){
+        items[i].style.display = (cat==="all" || items[i].classList.contains(cat)) ? "block":"none";
+    }
+}
+
+function addToCart(name,price){
+    cart.push({name,price});
+    localStorage.setItem("cart", JSON.stringify(cart));
+    updateCart();
+}
+
+function updateCart(){
+    let list = document.getElementById("cart-items");
+    list.innerHTML="";
+    let total=0;
+    cart.forEach(item=>{
+        list.innerHTML += `<li>${item.name} - ₹${item.price}</li>`;
+        total+=item.price;
+    });
+    document.getElementById("total").innerText="Total: ₹"+total;
+}
+
+function toggleCart(){
+    let c = document.getElementById("cart");
+    c.style.display = c.style.display==="block"?"none":"block";
+}
+
+function orderWhatsApp(){
+    let msg="Order:%0A";
+    cart.forEach(i=>{
+        msg+=i.name+" - ₹"+i.price+"%0A";
+    });
+    window.open("https://wa.me/91XXXXXXXXXX?text="+msg);
+}
+
+displayProducts();
+updateCart();
+</script>
+
+</body>
+</html>
