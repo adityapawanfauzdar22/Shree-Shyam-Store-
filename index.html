@@ -1,188 +1,285 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Shree Shyam Store Ultra Final</title>
+<meta charset="UTF-8">
+<title>Shree Shyam Store PRO</title>
 
 <style>
-body{margin:0;font-family:Arial;background:#f6f9f7;overflow-x:hidden;}
-.navbar{display:flex;justify-content:space-between;padding:15px;background:#fff;}
-.banner{margin:10px;padding:15px;background:linear-gradient(to right,#ff9800,#ff5722);color:white;border-radius:10px;text-align:center;font-weight:bold;}
-.container{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;padding:10px;}
-.product{background:white;padding:10px;border-radius:10px;text-align:center;}
-.btn{background:#2e7d32;color:white;border:none;padding:6px;border-radius:10px;margin:3px;cursor:pointer;}
-.cart{position:fixed;right:0;top:0;width:300px;height:100%;background:white;display:none;padding:10px;overflow:auto;}
-.cart-btn{position:fixed;bottom:20px;right:20px;background:black;color:white;padding:15px;border-radius:50%;}
-.admin{display:none;padding:10px;}
-.welcome{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:white;padding:20px;border-radius:15px;z-index:999;text-align:center;}
-.fall{position:fixed;animation:fall linear;}
-@keyframes fall{0%{top:-50px;}100%{top:100vh;}}
+body{
+margin:0;
+font-family:sans-serif;
+background:linear-gradient(#fdfbfb,#ebedee);
+overflow-x:hidden;
+}
+
+/* Banner */
+.banner{
+background:linear-gradient(90deg,#ff9800,#ff3d00);
+color:white;text-align:center;
+padding:12px;font-size:20px;
+}
+
+/* Peacock feathers */
+.feather{
+position:fixed;
+top:0;
+width:50px;
+height:50px;
+background:radial-gradient(circle,rainbow,blue);
+opacity:0.7;
+animation:float 6s infinite alternate;
+}
+.f1{left:20%;}
+.f2{right:20%;}
+
+@keyframes float{
+from{transform:translateY(0);}
+to{transform:translateY(20px);}
+}
+
+/* Header */
+.header{
+display:flex;
+justify-content:space-between;
+padding:10px;
+background:white;
+backdrop-filter:blur(10px);
+}
+
+.search{
+width:70%;
+padding:8px;
+border-radius:10px;
+border:1px solid #ccc;
+}
+
+/* Product card */
+.product{
+background:rgba(255,255,255,0.8);
+margin:12px;
+padding:12px;
+border-radius:20px;
+box-shadow:0 10px 20px rgba(0,0,0,0.1);
+transition:0.3s;
+}
+
+.product:hover{transform:scale(1.05);}
+
+/* Buttons */
+button{
+background:#ff9800;
+color:white;
+border:none;
+padding:6px 12px;
+margin:5px;
+border-radius:10px;
+cursor:pointer;
+}
+
+/* Cart */
+#cart{
+position:fixed;
+right:0;
+top:0;
+width:280px;
+height:100%;
+background:white;
+border-left:2px solid #ddd;
+padding:10px;
+overflow:auto;
+}
+
+/* Welcome */
+#welcome{
+position:fixed;
+top:40%;
+left:35%;
+background:white;
+padding:20px;
+border-radius:20px;
+display:none;
+box-shadow:0 0 20px rgba(0,0,0,0.3);
+}
+
+/* Petals */
+.petal{
+position:fixed;
+top:-10px;
+font-size:18px;
+animation:fall linear infinite;
+}
+
+@keyframes fall{
+to{transform:translateY(100vh);}
+}
+
+/* Flying item */
+.fly{
+position:absolute;
+transition:all 1s ease-in-out;
+z-index:999;
+}
 </style>
+
 </head>
 
 <body>
 
-<div class="welcome" id="welcome">
-🙏 Shree Krishna Welcome 🙏
+<div class="feather f1"></div>
+<div class="feather f2"></div>
+
+<div class="banner">🎉 20% Discount on Your First Order</div>
+
+<div class="header">
+<input class="search" placeholder="Search..." onkeyup="searchProduct(this.value)">
+<button onclick="login()">Admin</button>
 </div>
 
-<div class="navbar">
-<h3>🛒 Shree Shyam Store</h3>
-<input id="search" placeholder="Search..." onkeyup="search()">
-<button onclick="adminLogin()">⚙️</button>
+<div id="products"></div>
+
+<div id="cart">
+<h3>🛒 Cart</h3>
+<div id="cartItems"></div>
+<h4>Total: ₹<span id="total">0</span></h4>
+<button onclick="order()">📲 Order</button>
 </div>
 
-<div class="banner">
-🔥 20% Discount on your first order 🔥
-</div>
-
-<div class="admin" id="adminPanel">
-<input id="name" placeholder="Name"><br>
-<input id="price" placeholder="Price"><br>
-<input type="file" id="img"><br>
-<button class="btn" onclick="addProduct()">Add Product</button>
-</div>
-
-<div class="container" id="products"></div>
-
-<div class="cart-btn" onclick="toggleCart()">🛒</div>
-
-<div class="cart" id="cart">
-<button onclick="toggleCart()">⬅ Back</button>
-<h3>Cart</h3>
-<ul id="cartItems"></ul>
-<h4 id="total"></h4>
-<button class="btn" onclick="order()">Purchase</button>
-</div>
+<div id="welcome">🙏 Shree Krishna Welcomes You</div>
 
 <script>
-setTimeout(()=>{document.getElementById("welcome").style.display="none";},3000);
 
-let PASSWORD="280688";
+let products=[
+{name:"Hammer",price:200,detail:"Steel strong hammer",img:"https://via.placeholder.com/100"},
+{name:"Drill",price:1500,detail:"Heavy drill machine",img:"https://via.placeholder.com/100"}
+];
+
+let cart=[];
 let isAdmin=false;
-let products=JSON.parse(localStorage.getItem("products"))||[];
-let cart=JSON.parse(localStorage.getItem("cart"))||[];
 
-function adminLogin(){
- let p=prompt("Enter Admin Password");
- if(p===PASSWORD){
-  isAdmin=true;
-  document.getElementById("adminPanel").style.display="block";
-  display();
- }
+/* Welcome */
+setTimeout(()=>{
+welcome.style.display="block";
+setTimeout(()=>welcome.style.display="none",3000);
+},500);
+
+/* Login */
+function login(){
+let pass=prompt("Enter Password");
+if(pass=="280688"){
+isAdmin=true;
+alert("Admin Mode ON");
+render();
+}
 }
 
+/* Add product */
 function addProduct(){
- let name=document.getElementById("name").value;
- let price=document.getElementById("price").value;
- let file=document.getElementById("img").files[0];
- let reader=new FileReader();
- reader.onload=function(){
-  products.push({name,price,img:reader.result});
-  localStorage.setItem("products",JSON.stringify(products));
-  display();
- }
- if(file) reader.readAsDataURL(file);
+let name=prompt("Name");
+let price=prompt("Price");
+let detail=prompt("Details");
+products.push({name,price,detail,img:"https://via.placeholder.com/100"});
+render();
 }
 
+/* Delete */
 function deleteProduct(i){
- products.splice(i,1);
- localStorage.setItem("products",JSON.stringify(products));
- display();
+products.splice(i,1);
+render();
 }
 
-function display(){
- let c=document.getElementById("products");
- c.innerHTML="";
- products.forEach((p,i)=>{
-  c.innerHTML+=`
-  <div class="product">
-  <img src="${p.img}" width="100">
-  <h4>${p.name}</h4>
-  <p>₹${p.price}</p>
-  <button class="btn" onclick="animateAdd(${i})">Add</button>
-  ${isAdmin ? `<button class="btn" onclick="deleteProduct(${i})">Delete</button>` : ``}
-  </div>`;
- });
+/* Render */
+function render(){
+let html="";
+products.forEach((p,i)=>{
+html+=`
+<div class="product">
+<img src="${p.img}" width="80"><br>
+<h3>${p.name}</h3>
+<p>₹${p.price}</p>
+
+<button onclick="flyToCart(event,${i})">Add to Cart</button>
+
+<details><summary>Details</summary>${p.detail}</details>
+
+${isAdmin?`<button onclick="deleteProduct(${i})">Delete</button>`:""}
+
+</div>`;
+});
+if(isAdmin) html+=`<button onclick="addProduct()">+ Add</button>`;
+productsDiv.innerHTML=html;
 }
 
-function animateAdd(i){
- let el=document.createElement("div");
- el.innerText="🛒";
- el.style.position="fixed";
- el.style.left="50%";
- el.style.top="50%";
- el.style.transition="1s";
- document.body.appendChild(el);
- setTimeout(()=>{el.style.left="90%";el.style.top="10%";},100);
- setTimeout(()=>{document.body.removeChild(el);addToCart(i);},1000);
-}
+/* Flying animation */
+function flyToCart(e,i){
+let img=document.createElement("div");
+img.className="fly";
+img.innerText="🛒";
+img.style.left=e.pageX+"px";
+img.style.top=e.pageY+"px";
+document.body.appendChild(img);
 
-function addToCart(i){
- let item=products[i];
- let found=cart.find(c=>c.name===item.name);
- if(found){found.qty++;}
- else{cart.push({...item,qty:1});}
- localStorage.setItem("cart",JSON.stringify(cart));
- updateCart();
-}
+setTimeout(()=>{
+img.style.left="90%";
+img.style.top="10%";
+},10);
 
-function changeQty(i,delta){
- cart[i].qty+=delta;
- if(cart[i].qty<=0) cart.splice(i,1);
- localStorage.setItem("cart",JSON.stringify(cart));
- updateCart();
-}
+setTimeout(()=>img.remove(),1000);
 
-function updateCart(){
- let list=document.getElementById("cartItems");
- list.innerHTML="";
- let total=0;
- cart.forEach((item,i)=>{
-  total+=item.price*item.qty;
-  list.innerHTML+=`<li>${item.name} x ${item.qty} = ₹${item.price*item.qty}
-  <button onclick="changeQty(${i},1)">+</button>
-  <button onclick="changeQty(${i},-1)">-</button></li>`;
- });
- document.getElementById("total").innerText="Total: ₹"+total;
-}
-
-function toggleCart(){
- let c=document.getElementById("cart");
- c.style.display=c.style.display==="block"?"none":"block";
-}
-
-function order(){
- let msg="Order:%0A";
- cart.forEach(i=>{
-  msg+=i.name+" x "+i.qty+"%0A";
- });
- window.open("https://wa.me/919694725220?text="+msg);
-}
-
-function search(){
- let val=document.getElementById("search").value.toLowerCase();
- document.querySelectorAll(".product").forEach(card=>{
-  card.style.display=card.innerText.toLowerCase().includes(val)?"block":"none";
- });
-}
-
-// ultra slow animation: 2 feathers + 1 petal
-setInterval(()=>{
- let icons=["🪶","🪶","🌸"];
- icons.forEach(icon=>{
-  let f=document.createElement("div");
-  f.className="fall";
-  f.style.left=Math.random()*100+"%";
-  f.style.animationDuration="10s";
-  f.innerText=icon;
-  document.body.appendChild(f);
-  setTimeout(()=>document.body.removeChild(f),10000);
- });
-},5000);
-
-display();
+cart.push({...products[i],qty:1});
 updateCart();
+}
+
+/* Cart */
+function updateCart(){
+let html="";
+let total=0;
+
+cart.forEach((c,i)=>{
+total+=c.price*c.qty;
+html+=`${c.name} x${c.qty}
+<button onclick="inc(${i})">+</button>
+<button onclick="dec(${i})">-</button><br>`;
+});
+
+cartItems.innerHTML=html;
+totalSpan.innerText=total;
+}
+
+function inc(i){cart[i].qty++;updateCart();}
+function dec(i){if(cart[i].qty>1)cart[i].qty--;else cart.splice(i,1);updateCart();}
+
+/* WhatsApp */
+function order(){
+let msg="Order:%0A";
+cart.forEach(c=>msg+=c.name+" x"+c.qty+"%0A");
+window.open("https://wa.me/919694725220?text="+msg);
+}
+
+/* Search */
+function searchProduct(val){
+let filtered=products.filter(p=>p.name.toLowerCase().includes(val.toLowerCase()));
+let html="";
+filtered.forEach(p=>html+=`<div class="product">${p.name} ₹${p.price}</div>`);
+productsDiv.innerHTML=html;
+}
+
+/* Petals */
+setInterval(()=>{
+let p=document.createElement("div");
+p.className="petal";
+p.innerText="🌸";
+p.style.left=Math.random()*100+"%";
+p.style.animationDuration=(5+Math.random()*5)+"s";
+document.body.appendChild(p);
+setTimeout(()=>p.remove(),10000);
+},300);
+
+let productsDiv=document.getElementById("products");
+let cartItems=document.getElementById("cartItems");
+let totalSpan=document.getElementById("total");
+
+render();
+
 </script>
 
 </body>
