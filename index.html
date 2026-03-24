@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Shree Shyam Store Ultimate</title>
+<title>Shree Shyam Store FINAL MAX</title>
 
 <style>
 body{margin:0;font-family:Arial;background:#f6f9f7;overflow-x:hidden;}
@@ -12,11 +12,11 @@ body{margin:0;font-family:Arial;background:#f6f9f7;overflow-x:hidden;}
 .product{background:white;padding:10px;border-radius:10px;text-align:center;}
 .btn{background:#2e7d32;color:white;border:none;padding:6px;border-radius:10px;margin:3px;cursor:pointer;}
 .cart{position:fixed;right:0;top:0;width:300px;height:100%;background:white;display:none;padding:10px;overflow:auto;}
-.cart-btn{position:fixed;bottom:20px;right:20px;background:black;color:white;padding:15px;border-radius:50%;font-size:18px;}
+.cart-btn{position:fixed;bottom:20px;right:20px;background:black;color:white;padding:15px;border-radius:50%;}
 .admin{display:none;padding:10px;}
-.fly{position:fixed;font-size:18px;animation:fall 2s linear;}
+.welcome{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:white;padding:20px;border-radius:15px;z-index:999;}
+.fall{position:fixed;animation:fall linear;}
 @keyframes fall{0%{top:-50px;}100%{top:100vh;}}
-.welcome{position:fixed;top:40%;left:50%;transform:translate(-50%,-50%);background:white;padding:20px;border-radius:15px;text-align:center;box-shadow:0 0 20px rgba(0,0,0,0.2);z-index:999;}
 </style>
 </head>
 
@@ -69,7 +69,7 @@ function adminLogin(){
   isAdmin=true;
   document.getElementById("adminPanel").style.display="block";
   display();
- } else alert("Wrong Password");
+ }
 }
 
 function addProduct(){
@@ -114,14 +114,8 @@ function animateAdd(i){
  el.style.top="50%";
  el.style.transition="1s";
  document.body.appendChild(el);
- setTimeout(()=>{
-  el.style.left="90%";
-  el.style.top="10%";
- },100);
- setTimeout(()=>{
-  document.body.removeChild(el);
-  addToCart(i);
- },1000);
+ setTimeout(()=>{el.style.left="90%";el.style.top="10%";},100);
+ setTimeout(()=>{document.body.removeChild(el);addToCart(i);},1000);
 }
 
 function addToCart(i){
@@ -133,13 +127,22 @@ function addToCart(i){
  updateCart();
 }
 
+function changeQty(i,delta){
+ cart[i].qty+=delta;
+ if(cart[i].qty<=0) cart.splice(i,1);
+ localStorage.setItem("cart",JSON.stringify(cart));
+ updateCart();
+}
+
 function updateCart(){
  let list=document.getElementById("cartItems");
  list.innerHTML="";
  let total=0;
  cart.forEach((item,i)=>{
   total+=item.price*item.qty;
-  list.innerHTML+=`<li>${item.name} x ${item.qty} = ₹${item.price*item.qty}</li>`;
+  list.innerHTML+=`<li>${item.name} x ${item.qty} = ₹${item.price*item.qty}
+  <button onclick="changeQty(${i},1)">+</button>
+  <button onclick="changeQty(${i},-1)">-</button></li>`;
  });
  document.getElementById("total").innerText="Total: ₹"+total;
 }
@@ -159,21 +162,20 @@ function order(){
 
 function search(){
  let val=document.getElementById("search").value.toLowerCase();
- let cards=document.querySelectorAll(".product");
- cards.forEach(card=>{
+ document.querySelectorAll(".product").forEach(card=>{
   card.style.display=card.innerText.toLowerCase().includes(val)?"block":"none";
  });
 }
 
-// peacock feathers every 2 sec
 setInterval(()=>{
  let f=document.createElement("div");
- f.className="fly";
+ f.className="fall";
  f.style.left=Math.random()*100+"%";
- f.innerText="🪶";
+ f.style.animationDuration="5s";
+ f.innerText=Math.random()>0.5?"🪶":"🌸";
  document.body.appendChild(f);
- setTimeout(()=>document.body.removeChild(f),2000);
-},2000);
+ setTimeout(()=>document.body.removeChild(f),5000);
+},500);
 
 display();
 updateCart();
