@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Shree Shyam Store FINAL MAX</title>
+<title>Shree Shyam Store Ultra Final</title>
 
 <style>
 body{margin:0;font-family:Arial;background:#f6f9f7;overflow-x:hidden;}
@@ -14,7 +14,7 @@ body{margin:0;font-family:Arial;background:#f6f9f7;overflow-x:hidden;}
 .cart{position:fixed;right:0;top:0;width:300px;height:100%;background:white;display:none;padding:10px;overflow:auto;}
 .cart-btn{position:fixed;bottom:20px;right:20px;background:black;color:white;padding:15px;border-radius:50%;}
 .admin{display:none;padding:10px;}
-.welcome{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:white;padding:20px;border-radius:15px;z-index:999;}
+.welcome{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:white;padding:20px;border-radius:15px;z-index:999;text-align:center;}
 .fall{position:fixed;animation:fall linear;}
 @keyframes fall{0%{top:-50px;}100%{top:100vh;}}
 </style>
@@ -23,7 +23,7 @@ body{margin:0;font-family:Arial;background:#f6f9f7;overflow-x:hidden;}
 <body>
 
 <div class="welcome" id="welcome">
-🙏 Welcome 🙏<br>Shree Krishna Bless You
+🙏 Shree Krishna Welcome 🙏
 </div>
 
 <div class="navbar">
@@ -167,15 +167,19 @@ function search(){
  });
 }
 
+// ultra slow animation: 2 feathers + 1 petal
 setInterval(()=>{
- let f=document.createElement("div");
- f.className="fall";
- f.style.left=Math.random()*100+"%";
- f.style.animationDuration="5s";
- f.innerText=Math.random()>0.5?"🪶":"🌸";
- document.body.appendChild(f);
- setTimeout(()=>document.body.removeChild(f),5000);
-},500);
+ let icons=["🪶","🪶","🌸"];
+ icons.forEach(icon=>{
+  let f=document.createElement("div");
+  f.className="fall";
+  f.style.left=Math.random()*100+"%";
+  f.style.animationDuration="10s";
+  f.innerText=icon;
+  document.body.appendChild(f);
+  setTimeout(()=>document.body.removeChild(f),10000);
+ });
+},5000);
 
 display();
 updateCart();
