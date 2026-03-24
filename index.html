@@ -9,17 +9,22 @@ body{margin:0;font-family:Arial;background:#f6f9f7;overflow-x:hidden;}
 .navbar{display:flex;justify-content:space-between;padding:15px;background:#fff;}
 .banner{margin:10px;padding:15px;background:linear-gradient(to right,#ff9800,#ff5722);color:white;border-radius:10px;text-align:center;font-weight:bold;}
 .container{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;padding:10px;}
-.product{background:white;padding:10px;border-radius:10px;text-align:center;position:relative;}
+.product{background:white;padding:10px;border-radius:10px;text-align:center;}
 .btn{background:#2e7d32;color:white;border:none;padding:6px;border-radius:10px;margin:3px;cursor:pointer;}
 .cart{position:fixed;right:0;top:0;width:300px;height:100%;background:white;display:none;padding:10px;overflow:auto;}
 .cart-btn{position:fixed;bottom:20px;right:20px;background:black;color:white;padding:15px;border-radius:50%;font-size:18px;}
 .admin{display:none;padding:10px;}
-.fly{position:fixed;font-size:18px;animation:fall 5s linear infinite;}
+.fly{position:fixed;font-size:18px;animation:fall 2s linear;}
 @keyframes fall{0%{top:-50px;}100%{top:100vh;}}
+.welcome{position:fixed;top:40%;left:50%;transform:translate(-50%,-50%);background:white;padding:20px;border-radius:15px;text-align:center;box-shadow:0 0 20px rgba(0,0,0,0.2);z-index:999;}
 </style>
 </head>
 
 <body>
+
+<div class="welcome" id="welcome">
+🙏 Welcome 🙏<br>Shree Krishna Bless You
+</div>
 
 <div class="navbar">
 <h3>🛒 Shree Shyam Store</h3>
@@ -51,14 +56,19 @@ body{margin:0;font-family:Arial;background:#f6f9f7;overflow-x:hidden;}
 </div>
 
 <script>
-let PASSWORD="1234";
+setTimeout(()=>{document.getElementById("welcome").style.display="none";},3000);
+
+let PASSWORD="280688";
+let isAdmin=false;
 let products=JSON.parse(localStorage.getItem("products"))||[];
 let cart=JSON.parse(localStorage.getItem("cart"))||[];
 
 function adminLogin(){
  let p=prompt("Enter Admin Password");
  if(p===PASSWORD){
+  isAdmin=true;
   document.getElementById("adminPanel").style.display="block";
+  display();
  } else alert("Wrong Password");
 }
 
@@ -91,7 +101,7 @@ function display(){
   <h4>${p.name}</h4>
   <p>₹${p.price}</p>
   <button class="btn" onclick="animateAdd(${i})">Add</button>
-  <button class="btn" onclick="deleteProduct(${i})">Delete</button>
+  ${isAdmin ? `<button class="btn" onclick="deleteProduct(${i})">Delete</button>` : ``}
   </div>`;
  });
 }
@@ -144,7 +154,7 @@ function order(){
  cart.forEach(i=>{
   msg+=i.name+" x "+i.qty+"%0A";
  });
- window.open("https://wa.me/91XXXXXXXXXX?text="+msg);
+ window.open("https://wa.me/919694725220?text="+msg);
 }
 
 function search(){
@@ -155,15 +165,15 @@ function search(){
  });
 }
 
-// peacock effect
+// peacock feathers every 2 sec
 setInterval(()=>{
  let f=document.createElement("div");
  f.className="fly";
  f.style.left=Math.random()*100+"%";
  f.innerText="🪶";
  document.body.appendChild(f);
- setTimeout(()=>document.body.removeChild(f),5000);
-},5000);
+ setTimeout(()=>document.body.removeChild(f),2000);
+},2000);
 
 display();
 updateCart();
