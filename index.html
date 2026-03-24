@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Shree Shyam Store PRO</title>
+<title>Shree Shyam Store</title>
 
 <style>
 body{
@@ -12,29 +12,20 @@ background:linear-gradient(#fdfbfb,#ebedee);
 overflow-x:hidden;
 }
 
+/* Store Name */
+.store-name{
+text-align:center;
+font-size:26px;
+font-weight:bold;
+padding:10px;
+color:#ff5722;
+}
+
 /* Banner */
 .banner{
 background:linear-gradient(90deg,#ff9800,#ff3d00);
 color:white;text-align:center;
-padding:12px;font-size:20px;
-}
-
-/* Peacock feathers */
-.feather{
-position:fixed;
-top:0;
-width:50px;
-height:50px;
-background:radial-gradient(circle,rainbow,blue);
-opacity:0.7;
-animation:float 6s infinite alternate;
-}
-.f1{left:20%;}
-.f2{right:20%;}
-
-@keyframes float{
-from{transform:translateY(0);}
-to{transform:translateY(20px);}
+padding:10px;
 }
 
 /* Header */
@@ -43,7 +34,6 @@ display:flex;
 justify-content:space-between;
 padding:10px;
 background:white;
-backdrop-filter:blur(10px);
 }
 
 .search{
@@ -53,19 +43,23 @@ border-radius:10px;
 border:1px solid #ccc;
 }
 
-/* Product card */
+/* Product */
 .product{
-background:rgba(255,255,255,0.8);
+background:white;
 margin:12px;
 padding:12px;
-border-radius:20px;
-box-shadow:0 10px 20px rgba(0,0,0,0.1);
-transition:0.3s;
+border-radius:15px;
+box-shadow:0 5px 10px rgba(0,0,0,0.1);
+text-align:center;
 }
 
-.product:hover{transform:scale(1.05);}
+.product img{
+width:100px;
+height:100px;
+object-fit:cover;
+}
 
-/* Buttons */
+/* Button */
 button{
 background:#ff9800;
 color:white;
@@ -73,7 +67,6 @@ border:none;
 padding:6px 12px;
 margin:5px;
 border-radius:10px;
-cursor:pointer;
 }
 
 /* Cart */
@@ -81,43 +74,22 @@ cursor:pointer;
 position:fixed;
 right:0;
 top:0;
-width:280px;
+width:260px;
 height:100%;
 background:white;
 border-left:2px solid #ddd;
 padding:10px;
-overflow:auto;
-}
-
-/* Welcome */
-#welcome{
-position:fixed;
-top:40%;
-left:35%;
-background:white;
-padding:20px;
-border-radius:20px;
-display:none;
-box-shadow:0 0 20px rgba(0,0,0,0.3);
 }
 
 /* Petals */
 .petal{
 position:fixed;
 top:-10px;
-font-size:18px;
-animation:fall linear infinite;
+animation:fall 8s linear infinite;
 }
 
 @keyframes fall{
 to{transform:translateY(100vh);}
-}
-
-/* Flying item */
-.fly{
-position:absolute;
-transition:all 1s ease-in-out;
-z-index:999;
 }
 </style>
 
@@ -125,8 +97,7 @@ z-index:999;
 
 <body>
 
-<div class="feather f1"></div>
-<div class="feather f2"></div>
+<div class="store-name">🛍️ Shree Shyam Store</div>
 
 <div class="banner">🎉 20% Discount on Your First Order</div>
 
@@ -141,26 +112,28 @@ z-index:999;
 <h3>🛒 Cart</h3>
 <div id="cartItems"></div>
 <h4>Total: ₹<span id="total">0</span></h4>
-<button onclick="order()">📲 Order</button>
+<button onclick="order()">Order</button>
 </div>
-
-<div id="welcome">🙏 Shree Krishna Welcomes You</div>
 
 <script>
 
 let products=[
-{name:"Hammer",price:200,detail:"Steel strong hammer",img:"https://via.placeholder.com/100"},
-{name:"Drill",price:1500,detail:"Heavy drill machine",img:"https://via.placeholder.com/100"}
+{
+name:"Hammer",
+price:200,
+detail:"Strong steel hammer",
+img:"https://cdn-icons-png.flaticon.com/512/2965/2965567.png"
+},
+{
+name:"Drill Machine",
+price:1500,
+detail:"Heavy duty drill",
+img:"https://cdn-icons-png.flaticon.com/512/1037/1037500.png"
+}
 ];
 
 let cart=[];
 let isAdmin=false;
-
-/* Welcome */
-setTimeout(()=>{
-welcome.style.display="block";
-setTimeout(()=>welcome.style.display="none",3000);
-},500);
 
 /* Login */
 function login(){
@@ -177,7 +150,10 @@ function addProduct(){
 let name=prompt("Name");
 let price=prompt("Price");
 let detail=prompt("Details");
-products.push({name,price,detail,img:"https://via.placeholder.com/100"});
+products.push({
+name,price,detail,
+img:"https://cdn-icons-png.flaticon.com/512/1046/1046857.png"
+});
 render();
 }
 
@@ -193,11 +169,11 @@ let html="";
 products.forEach((p,i)=>{
 html+=`
 <div class="product">
-<img src="${p.img}" width="80"><br>
+<img src="${p.img}">
 <h3>${p.name}</h3>
 <p>₹${p.price}</p>
 
-<button onclick="flyToCart(event,${i})">Add to Cart</button>
+<button onclick="addToCart(${i})">Add to Cart</button>
 
 <details><summary>Details</summary>${p.detail}</details>
 
@@ -205,31 +181,18 @@ ${isAdmin?`<button onclick="deleteProduct(${i})">Delete</button>`:""}
 
 </div>`;
 });
-if(isAdmin) html+=`<button onclick="addProduct()">+ Add</button>`;
+
+if(isAdmin) html+=`<button onclick="addProduct()">+ Add Product</button>`;
+
 productsDiv.innerHTML=html;
 }
 
-/* Flying animation */
-function flyToCart(e,i){
-let img=document.createElement("div");
-img.className="fly";
-img.innerText="🛒";
-img.style.left=e.pageX+"px";
-img.style.top=e.pageY+"px";
-document.body.appendChild(img);
-
-setTimeout(()=>{
-img.style.left="90%";
-img.style.top="10%";
-},10);
-
-setTimeout(()=>img.remove(),1000);
-
+/* Cart */
+function addToCart(i){
 cart.push({...products[i],qty:1});
 updateCart();
 }
 
-/* Cart */
 function updateCart(){
 let html="";
 let total=0;
@@ -246,7 +209,11 @@ totalSpan.innerText=total;
 }
 
 function inc(i){cart[i].qty++;updateCart();}
-function dec(i){if(cart[i].qty>1)cart[i].qty--;else cart.splice(i,1);updateCart();}
+function dec(i){
+if(cart[i].qty>1)cart[i].qty--;
+else cart.splice(i,1);
+updateCart();
+}
 
 /* WhatsApp */
 function order(){
@@ -259,7 +226,9 @@ window.open("https://wa.me/919694725220?text="+msg);
 function searchProduct(val){
 let filtered=products.filter(p=>p.name.toLowerCase().includes(val.toLowerCase()));
 let html="";
-filtered.forEach(p=>html+=`<div class="product">${p.name} ₹${p.price}</div>`);
+filtered.forEach(p=>{
+html+=`<div class="product">${p.name} ₹${p.price}</div>`;
+});
 productsDiv.innerHTML=html;
 }
 
@@ -269,10 +238,9 @@ let p=document.createElement("div");
 p.className="petal";
 p.innerText="🌸";
 p.style.left=Math.random()*100+"%";
-p.style.animationDuration=(5+Math.random()*5)+"s";
 document.body.appendChild(p);
-setTimeout(()=>p.remove(),10000);
-},300);
+setTimeout(()=>p.remove(),8000);
+},400);
 
 let productsDiv=document.getElementById("products");
 let cartItems=document.getElementById("cartItems");
