@@ -1,50 +1,61 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Shree Shyam Store FINAL</title>
+<title>Shree Shyam Store FINAL PRO</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-
 <style>
 body { margin:0; font-family:'Segoe UI'; background:#f6f9f7; }
-.navbar { display:flex; justify-content:space-between; padding:15px; background:white; }
+.navbar { display:flex; justify-content:space-between; padding:15px; background:white; box-shadow:0 2px 10px rgba(0,0,0,0.1);}
+.banner {margin:10px; padding:15px; background:linear-gradient(to right,#ff9800,#ff5722); color:white; border-radius:10px;}
 .container { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:15px; padding:15px; }
 .product { background:white; padding:10px; border-radius:10px; text-align:center; }
 .btn { background:#2e7d32; color:white; padding:6px; border:none; border-radius:10px; margin:3px; cursor:pointer; }
 .cart { position:fixed; right:0; top:0; width:300px; height:100%; background:white; display:none; padding:10px; overflow:auto; }
+.cart-btn {position:fixed; right:10px; top:10px; background:black; color:white; padding:10px; border-radius:50%; cursor:pointer;}
+.admin {display:none; padding:10px;}
 </style>
 </head>
 <body>
 
 <div class="navbar">
-<h2>🛒 Shree Shyam Store FINAL</h2>
-<button onclick="toggleCart()">Cart</button>
+<h2>🛒 Shree Shyam Store</h2>
+<button onclick="showAdmin()">⚙️</button>
 </div>
 
-<div style="padding:10px;">
-<h3>Add Product (Admin)</h3>
+<div class="banner">
+<h3>🔥 Special Discount Offer 🔥</h3>
+<p>Best tools at lowest price</p>
+</div>
+
+<div class="admin" id="adminPanel">
 <input id="name" placeholder="Name"><br>
 <input id="price" placeholder="Price"><br>
 <input type="file" id="imgFile"><br>
-<button class="btn" onclick="addProduct()">Add</button>
+<button class="btn" onclick="addProduct()">Add Product</button>
 </div>
 
 <div class="container" id="products"></div>
 
+<div class="cart-btn" onclick="toggleCart()">🛒</div>
+
 <div class="cart" id="cart">
+<button onclick="toggleCart()">⬅ Back</button>
 <h3>Cart</h3>
 <ul id="cartItems"></ul>
 <h4 id="total"></h4>
 </div>
 
-<div style="padding:10px;">
-<h3>Sales Dashboard</h3>
-<p id="sales"></p>
-</div>
-
 <script>
+let PASSWORD="1234";
 let products=JSON.parse(localStorage.getItem("products"))||[];
 let cart=JSON.parse(localStorage.getItem("cart"))||[];
-let sales=JSON.parse(localStorage.getItem("sales"))||0;
+
+function showAdmin(){
+ let pass=prompt("Enter Admin Password");
+ if(pass===PASSWORD){
+  document.getElementById("adminPanel").style.display="block";
+ } else alert("Wrong Password");
+}
 
 function addProduct(){
  let name=document.getElementById("name").value;
@@ -107,13 +118,8 @@ function toggleCart(){
  c.style.display=c.style.display==="block"?"none":"block";
 }
 
-function loadDashboard(){
- document.getElementById("sales").innerText="Total Sales: ₹"+sales;
-}
-
 displayProducts();
 updateCart();
-loadDashboard();
 </script>
 
 </body>
